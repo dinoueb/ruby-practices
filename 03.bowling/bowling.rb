@@ -1,17 +1,13 @@
 # frozen_string_literal: true
 
 def to_score(roll_result)
-  strike = 'X'
-
-  return 10 if roll_result == strike
+  return 10 if roll_result == 'X'
 
   roll_result.to_i
 end
 
 def strike?(score)
-  strike = 10
-
-  score == strike
+  score == 10
 end
 
 def sum_scores_in_range(scores, range)
@@ -19,9 +15,7 @@ def sum_scores_in_range(scores, range)
 end
 
 def spare?(frame_score)
-  spare = 10
-
-  frame_score == spare
+  frame_score == 10
 end
 
 scores = ARGV[0].split(',').map { |roll_result| to_score(roll_result) }
