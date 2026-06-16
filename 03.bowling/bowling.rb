@@ -24,7 +24,7 @@ frame_ten = 10
 frame_count = 1
 roll_count = 0
 total_score = 0
-while frame_count < frame_ten
+while frame_count < frame_ten # 9フレームまでループ処理
   if strike? scores[roll_count] # ストライクなら
     total_score += sum_scores_in_range(scores, roll_count..roll_count + 2)
     roll_count += 1
