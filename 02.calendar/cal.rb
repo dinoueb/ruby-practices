@@ -14,7 +14,7 @@ def create_monthly_calendar(first_day, last_day)
   monthly_calendar = Array.new(MAX_WEEK) { Array.new(DAYS_OF_WEEK.length) }
   
   week_count = 0
-  first_day.step(last_day) do |date|
+  (first_day..last_day).each do |date|
     monthly_calendar[week_count][date.wday] = date.day
 
     if date.saturday?
