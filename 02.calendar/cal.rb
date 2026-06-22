@@ -3,7 +3,7 @@
 require 'optparse'
 require 'date'
 
-DAYS_OF_WEEK = ["日", "月", "火", "水", "木", "金", "土"]
+DAYS_OF_WEEK = ["日", "月", "火", "水", "木", "金", "土"].freeze
 MAX_WEEK = 6
 CALENDAR_FORMAT_WIDTH = {
   "year" => 13,
@@ -11,7 +11,7 @@ CALENDAR_FORMAT_WIDTH = {
   "week" => 22,
   "day" => 2,
   "wday" => 15
-}
+}.freeze
 
 def create_monthly_calendar(first_day, last_day)
   monthly_calendar = Array.new(MAX_WEEK) { Array.new(DAYS_OF_WEEK.length) }
