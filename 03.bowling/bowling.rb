@@ -1,14 +1,15 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-def to_score(roll_result)
-  return 10 if roll_result == 'X'
+MAX_PINS = 10
+ROLL_RESULT_TO_SCORE = { 'X' => 10 }.freeze
 
-  roll_result.to_i
+def to_score(roll_result)
+  ROLL_RESULT_TO_SCORE.fetch(roll_result, roll_result.to_i)
 end
 
 def strike?(score)
-  score == 10
+  score == MAX_PINS
 end
 
 def sum_scores_in_range(scores, range)
@@ -16,7 +17,7 @@ def sum_scores_in_range(scores, range)
 end
 
 def spare?(frame_score)
-  frame_score == 10
+  frame_score == MAX_PINS
 end
 
 scores = ARGV[0].split(',').map { |roll_result| to_score(roll_result) }
