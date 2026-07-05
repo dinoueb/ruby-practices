@@ -14,6 +14,8 @@ def calc_column_width(files)
 end
 
 def print_files(files)
+  return if files.empty?
+
   column_width = calc_column_width(files)
   max_row = (files.length + (MAX_COLUMN - 1)) / MAX_COLUMN
   max_row.times do |row_number|
@@ -33,4 +35,4 @@ end
 
 target_files = Dir.glob('*')
 
-print_files(target_files) unless target_files.empty?
+print_files(target_files)
