@@ -4,6 +4,12 @@
 COLUMN_WIDTH_MULTIPLIER = 8
 MAX_COLUMN = 3
 
+def main
+  target_files = Dir.glob('*')
+
+  print_files(target_files)
+end
+
 def calc_column_width(files)
   max_filename_length = files.map(&:length).max
   max_filename_length.ceildiv(COLUMN_WIDTH_MULTIPLIER) * COLUMN_WIDTH_MULTIPLIER
@@ -29,6 +35,4 @@ def print_files(files)
   end
 end
 
-target_files = Dir.glob('*')
-
-print_files(target_files)
+main
