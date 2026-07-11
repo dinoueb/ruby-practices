@@ -9,7 +9,8 @@ MAX_COLUMN = 3
 
 def main
   params = parse_params
-  target_files = params[:a] ? Dir.entries(Dir.pwd).sort : Dir.glob('*')
+  directory_path = ARGV[0] || Dir.pwd
+  target_files = params[:a] ? Dir.entries(directory_path).sort : Dir.glob('*', base: directory_path)
 
   print_files(target_files)
 end
