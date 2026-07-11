@@ -3,7 +3,6 @@
 
 require 'optparse'
 
-OPTIONS = ['-a'].freeze
 COLUMN_WIDTH_MULTIPLIER = 8
 MAX_COLUMN = 3
 
@@ -19,7 +18,7 @@ def parse_params
   params = {}
 
   option_parser = OptionParser.new
-  OPTIONS.each { |option| option_parser.on(option) }
+  option_parser.on('-a')
   option_parser.parse!(ARGV, into: params)
   params
 end
