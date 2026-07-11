@@ -11,8 +11,8 @@ def main
 end
 
 def calc_column_width(files)
-  max_filename_length = files.map(&:length).max
-  max_filename_length.ceildiv(COLUMN_WIDTH_MULTIPLIER) * COLUMN_WIDTH_MULTIPLIER
+  max_length = files.map(&:length).max
+  max_length.ceildiv(COLUMN_WIDTH_MULTIPLIER) * COLUMN_WIDTH_MULTIPLIER
 end
 
 def print_files(files)
