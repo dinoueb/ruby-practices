@@ -3,14 +3,24 @@
 
 require 'optparse'
 
+OPTIONS = ['-a'].freeze
 COLUMN_WIDTH_MULTIPLIER = 8
 MAX_COLUMN = 3
 
 def main
-  options = ARGV.getopts('a', symbolize_names: true)
-  target_files = options[:a] ? Dir.entries(Dir.pwd).sort : Dir.glob('*')
+  params = parse_params
+  target_files = params[:a] ? Dir.entries(Dir.pwd).sort : Dir.glob('*')
 
   print_files(target_files)
+end
+
+def parse_params
+  params = {}
+
+  option_parser = OptionParser.new
+  OPTIONS.each { |option| option_parser.on(option) }
+  option_parser.parse!(ARGV, into: params)
+  params
 end
 
 def print_files(files)
