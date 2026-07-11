@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require 'optparse'
+
 COLUMN_WIDTH_MULTIPLIER = 8
 MAX_COLUMN = 3
 
@@ -8,11 +10,6 @@ def main
   target_files = Dir.glob('*')
 
   print_files(target_files)
-end
-
-def calc_column_width(files)
-  max_length = files.map(&:length).max
-  max_length.ceildiv(COLUMN_WIDTH_MULTIPLIER) * COLUMN_WIDTH_MULTIPLIER
 end
 
 def print_files(files)
@@ -33,6 +30,11 @@ def print_files(files)
     end
     puts
   end
+end
+
+def calc_column_width(files)
+  max_length = files.map(&:length).max
+  max_length.ceildiv(COLUMN_WIDTH_MULTIPLIER) * COLUMN_WIDTH_MULTIPLIER
 end
 
 main
