@@ -7,7 +7,8 @@ COLUMN_WIDTH_MULTIPLIER = 8
 MAX_COLUMN = 3
 
 def main
-  target_files = Dir.glob('*')
+  options = ARGV.getopts('a', symbolize_names: true)
+  target_files = options[:a] ? Dir.entries(Dir.pwd).sort : Dir.glob('*')
 
   print_files(target_files)
 end
