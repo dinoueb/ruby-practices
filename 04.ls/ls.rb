@@ -5,11 +5,16 @@ require 'optparse'
 
 COLUMN_WIDTH_MULTIPLIER = 8
 MAX_COLUMN = 3
+OPTIONS = {
+  '-a' => :all,
+  '-r' => :reverse
+}.freeze
 
 def main
   params = parse_params
   directory_path = ARGV[0] || Dir.pwd
-  target_files = params[:a] ? Dir.entries(directory_path).sort : Dir.glob('*', base: directory_path)
+  target_files = params[:all] ? Dir.entries(directory_path).sort : Dir.glob('*', base: directory_path)
+  target_files.reverse! if params[:reverse]
 
   print_files(target_files)
 end
@@ -18,8 +23,8 @@ def parse_params
   params = {}
 
   option_parser = OptionParser.new
-  option_parser.on('-a')
-  option_parser.parse!(ARGV, into: params)
+  OPTIONS.each { |option, symbol| option_parser.on(option) { params[symbol] = true } }
+  option_parser.parse!(ARGV)
   params
 end
 
