@@ -3,18 +3,20 @@
 
 require 'optparse'
 
-COLUMN_WIDTH_MULTIPLIER = 8
-MAX_COLUMN = 3
 OPTIONS = {
   '-a' => :all,
   '-r' => :reverse
 }.freeze
+HIDDEN_FILE_REGEXP = /^\./
+COLUMN_WIDTH_MULTIPLIER = 8
+MAX_COLUMN = 3
 
 def main
   params = parse_params
   directory_path = ARGV[0] || Dir.pwd
-  target_files = params[:all] ? Dir.entries(directory_path).sort : Dir.glob('*', base: directory_path)
-  target_files.reverse! if params[:reverse]
+  target_files = Dir.entries(directory_path).sort
+
+  apply_params!(target_files, params)
 
   print_files(target_files)
 end
@@ -26,6 +28,11 @@ def parse_params
   OPTIONS.each { |option, symbol| option_parser.on(option) { params[symbol] = true } }
   option_parser.parse!(ARGV)
   params
+end
+
+def apply_params!(files, params)
+  files.delete_if { |file| file.match?(HIDDEN_FILE_REGEXP) } unless params[:all]
+  files.reverse! if params[:reverse]
 end
 
 def print_files(files)
