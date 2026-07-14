@@ -1,18 +1,26 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require 'optparse'
+
 COLUMN_WIDTH_MULTIPLIER = 8
 MAX_COLUMN = 3
 
 def main
-  target_files = Dir.glob('*')
+  params = parse_params
+  directory_path = ARGV[0] || Dir.pwd
+  target_files = params[:a] ? Dir.entries(directory_path).sort : Dir.glob('*', base: directory_path)
 
   print_files(target_files)
 end
 
-def calc_column_width(files)
-  max_length = files.map(&:length).max
-  max_length.ceildiv(COLUMN_WIDTH_MULTIPLIER) * COLUMN_WIDTH_MULTIPLIER
+def parse_params
+  params = {}
+
+  option_parser = OptionParser.new
+  option_parser.on('-a')
+  option_parser.parse!(ARGV, into: params)
+  params
 end
 
 def print_files(files)
@@ -33,6 +41,11 @@ def print_files(files)
     end
     puts
   end
+end
+
+def calc_column_width(files)
+  max_length = files.map(&:length).max
+  max_length.ceildiv(COLUMN_WIDTH_MULTIPLIER) * COLUMN_WIDTH_MULTIPLIER
 end
 
 main
