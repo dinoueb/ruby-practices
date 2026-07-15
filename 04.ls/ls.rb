@@ -25,7 +25,9 @@ def parse_params
   params = {}
 
   option_parser = OptionParser.new
-  OPTIONS.each { |option, symbol| option_parser.on(option) { params[symbol] = true } }
+  OPTIONS.each do |option, option_name|
+    option_parser.on(option) { params[option_name] = true }
+  end
   option_parser.parse!(ARGV)
   params
 end
