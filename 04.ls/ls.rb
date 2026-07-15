@@ -7,7 +7,6 @@ OPTIONS = {
   '-a' => :all,
   '-r' => :reverse
 }.freeze
-HIDDEN_FILE_REGEXP = /^\./
 COLUMN_WIDTH_MULTIPLIER = 8
 MAX_COLUMN = 3
 
@@ -34,7 +33,7 @@ end
 
 def apply_params(files, params)
   copied_files = files.clone
-  copied_files = copied_files.reject { |file| file.match?(HIDDEN_FILE_REGEXP) } unless params[:all]
+  copied_files = copied_files.reject { |file| file.start_with?('.') } unless params[:all]
   copied_files = copied_files.reverse if params[:reverse]
   copied_files
 end
