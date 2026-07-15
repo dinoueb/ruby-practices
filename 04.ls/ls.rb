@@ -16,7 +16,7 @@ def main
   directory_path = ARGV[0] || Dir.pwd
   target_files = Dir.entries(directory_path).sort
 
-  apply_params!(target_files, params)
+  target_files = apply_params(target_files, params)
 
   print_files(target_files)
 end
@@ -32,9 +32,11 @@ def parse_params
   params
 end
 
-def apply_params!(files, params)
-  files.delete_if { |file| file.match?(HIDDEN_FILE_REGEXP) } unless params[:all]
-  files.reverse! if params[:reverse]
+def apply_params(files, params)
+  copied_files = files.clone
+  copied_files = copied_files.reject { |file| file.match?(HIDDEN_FILE_REGEXP) } unless params[:all]
+  copied_files = copied_files.reverse if params[:reverse]
+  copied_files
 end
 
 def print_files(files)
