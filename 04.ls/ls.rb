@@ -3,7 +3,7 @@
 
 require 'optparse'
 
-OPTIONS = {
+OPTION_TO_NAME = {
   '-a' => :all,
   '-r' => :reverse
 }.freeze
@@ -12,30 +12,30 @@ MAX_COLUMN = 3
 
 def main
   parsed_params = parse_params
-  directory_path = parse_params[:directory_path] || Dir.pwd
+  directory_path = parsed_params[:directory_path] || Dir.pwd
   target_files = Dir.entries(directory_path).sort
 
-  target_files = apply_params(target_files, parsed_params)
+  processed_files = apply_options(target_files, parsed_params)
 
-  print_files(target_files)
+  print_files(processed_files)
 end
 
 def parse_params
   parsed_params = {}
 
   option_parser = OptionParser.new
-  OPTIONS.each do |option, option_name|
+  OPTION_TO_NAME.each do |option, option_name|
     option_parser.on(option) { parsed_params[option_name] = true }
   end
   directory_paths = option_parser.parse(ARGV)
   parsed_params.merge(directory_path: directory_paths[0])
 end
 
-def apply_params(files, parsed_params)
-  copied_files = files.clone
-  copied_files = copied_files.reject { |file| file.start_with?('.') } unless parsed_params[:all]
-  copied_files = copied_files.reverse if parsed_params[:reverse]
-  copied_files
+def apply_options(files, options)
+  processed_files = files
+  processed_files = processed_files.reject { |file| file.start_with?('.') } unless options[:all]
+  processed_files = processed_files.reverse if options[:reverse]
+  processed_files
 end
 
 def print_files(files)
