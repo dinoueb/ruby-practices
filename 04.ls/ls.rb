@@ -11,24 +11,24 @@ COLUMN_WIDTH_MULTIPLIER = 8
 MAX_COLUMN = 3
 
 def main
-  parsed_params = parse_params
-  directory_path = parsed_params[:directory_path] || Dir.pwd
+  options, directory_path = parse_params
+  directory_path ||= Dir.pwd
   target_files = Dir.entries(directory_path).sort
 
-  processed_files = apply_options(target_files, parsed_params)
+  processed_files = apply_options(target_files, options)
 
   print_files(processed_files)
 end
 
 def parse_params
-  parsed_params = {}
+  options = {}
 
   option_parser = OptionParser.new
   OPTION_TO_NAME.each do |option, option_name|
-    option_parser.on(option) { parsed_params[option_name] = true }
+    option_parser.on(option) { options[option_name] = true }
   end
   directory_paths = option_parser.parse(ARGV)
-  parsed_params.merge(directory_path: directory_paths[0])
+  [options, directory_paths[0]]
 end
 
 def apply_options(files, options)
