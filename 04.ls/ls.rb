@@ -32,10 +32,8 @@ def parse_params
 end
 
 def apply_options(files, options)
-  processed_files = files
-  processed_files = processed_files.reject { |file| file.start_with?('.') } unless options[:all]
-  processed_files = processed_files.reverse if options[:reverse]
-  processed_files
+  filtered_files = options[:all] ? files : files.reject { |file| file.start_with?('.') }
+  options[:reverse] ? filtered_files.reverse : filtered_files
 end
 
 def print_files(files)
