@@ -3,24 +3,37 @@
 
 require 'optparse'
 
+OPTION_TO_NAME = {
+  '-a' => :all,
+  '-r' => :reverse
+}.freeze
 COLUMN_WIDTH_MULTIPLIER = 8
 MAX_COLUMN = 3
 
 def main
-  params = parse_params
-  directory_path = ARGV[0] || Dir.pwd
-  target_files = params[:a] ? Dir.entries(directory_path).sort : Dir.glob('*', base: directory_path)
+  options, directory_path = parse_params
+  directory_path ||= Dir.pwd
+  target_files = Dir.entries(directory_path).sort
 
-  print_files(target_files)
+  processed_files = apply_options(target_files, options)
+
+  print_files(processed_files)
 end
 
 def parse_params
-  params = {}
+  options = {}
 
   option_parser = OptionParser.new
-  option_parser.on('-a')
-  option_parser.parse!(ARGV, into: params)
-  params
+  OPTION_TO_NAME.each do |option, option_name|
+    option_parser.on(option) { options[option_name] = true }
+  end
+  directory_paths = option_parser.parse(ARGV)
+  [options, directory_paths[0]]
+end
+
+def apply_options(files, options)
+  filtered_files = options[:all] ? files : files.reject { |file| file.start_with?('.') }
+  options[:reverse] ? filtered_files.reverse : filtered_files
 end
 
 def print_files(files)
