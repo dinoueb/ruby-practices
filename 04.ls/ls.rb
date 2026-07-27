@@ -54,13 +54,12 @@ def apply_options(files, options)
 end
 
 def print_file_status(file_paths)
-  file_path_to_file_status = file_paths.to_h { |file_path| [file_path, File::Stat.new(file_path)] }
+  file_path_to_file_status = file_paths.to_h { |file_path| [file_path, File.lstat(file_path)] }
   column_widths = calc_column_widths(file_path_to_file_status.values)
 
   puts "total #{file_path_to_file_status.values.sum(&:blocks)}"
   file_path_to_file_status.each do |file_path, file_status|
-    print FILE_TYPE_TO_ENTRY_TYPE[file_status.ftype]
-    print parse_permission(file_status.mode)
+    print FILE_TYPE_TO_ENTRY_TYPE[file_status.ftype] + parse_permission(file_status.mode)
     print ' '
     print file_status.nlink.to_s.rjust(column_widths[:links])
     print ' '
@@ -73,6 +72,7 @@ def print_file_status(file_paths)
     print file_status.mtime.strftime('%_m %e %R')
     print ' '
     print File.basename(file_path)
+    print " -> #{File.readlink(file_path)}" if file_status.symlink?
     puts
   end
 end
