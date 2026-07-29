@@ -48,9 +48,9 @@ def parse_params
   [options, directory_paths[0]]
 end
 
-def apply_options(files, options)
-  filtered_files = options[:all] ? files : files.reject { |file| file.start_with?('.') }
-  options[:reverse] ? filtered_files.reverse : filtered_files
+def apply_options(file_names, options)
+  filtered_file_names = options[:all] ? file_names : file_names.reject { |file_name| file_name.start_with?('.') }
+  options[:reverse] ? filtered_file_names.reverse : filtered_file_names
 end
 
 def print_file_status(file_paths)
@@ -133,28 +133,28 @@ def parse_other_permission(file_mode)
   r + w + x
 end
 
-def print_file_names(files)
-  return if files.empty?
+def print_file_names(file_names)
+  return if file_names.empty?
 
-  column_width = calc_column_width(files)
-  max_row = files.length.ceildiv(MAX_COLUMN)
+  column_width = calc_column_width(file_names)
+  max_row = file_names.length.ceildiv(MAX_COLUMN)
   max_row.times do |row_number|
     MAX_COLUMN.times do |column_number|
       index = row_number + max_row * column_number
-      break if index >= files.length
+      break if index >= file_names.length
 
       if column_number != MAX_COLUMN - 1
-        print files[index].ljust(column_width)
+        print file_names[index].ljust(column_width)
       else
-        print files[index]
+        print file_names[index]
       end
     end
     puts
   end
 end
 
-def calc_column_width(files)
-  max_length = files.map(&:length).max
+def calc_column_width(file_names)
+  max_length = file_names.map(&:length).max
   max_length.ceildiv(COLUMN_WIDTH_MULTIPLIER) * COLUMN_WIDTH_MULTIPLIER
 end
 
