@@ -25,15 +25,13 @@ MAX_COLUMN = 3
 def main
   options, directory_path = parse_params
   directory_path ||= Dir.pwd
-  target_file_names = Dir.entries(directory_path).sort
-
-  processed_file_names = apply_options(target_file_names, options)
+  file_names = list_file_names(directory_path, options)
 
   if options[:long_format]
-    file_paths = processed_file_names.map { |file_name| File.join(directory_path, file_name) }
+    file_paths = file_names.map { |file_name| File.join(directory_path, file_name) }
     print_file_status(file_paths)
   else
-    print_file_names(processed_file_names)
+    print_file_names(file_names)
   end
 end
 
@@ -48,7 +46,8 @@ def parse_params
   [options, directory_paths[0]]
 end
 
-def apply_options(file_names, options)
+def list_file_names(directory_path, options)
+  file_names = Dir.entries(directory_path).sort
   filtered_file_names = options[:all] ? file_names : file_names.reject { |file_name| file_name.start_with?('.') }
   options[:reverse] ? filtered_file_names.reverse : filtered_file_names
 end
