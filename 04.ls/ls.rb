@@ -86,47 +86,21 @@ def calc_column_widths(file_statuses)
 end
 
 def parse_permission(file_mode)
-  owner = parse_owner_permission(file_mode)
-  group = parse_group_permission(file_mode)
-  other = parse_other_permission(file_mode)
+  owner = parse_permission_triplets(file_mode[6..8], file_mode[11], 's')
+  group = parse_permission_triplets(file_mode[3..5], file_mode[10], 's')
+  other = parse_permission_triplets(file_mode[0..2], file_mode[9], 't')
 
   owner + group + other
 end
 
-def parse_owner_permission(file_mode)
-  r = file_mode[8] == 1 ? 'r' : '-'
-  w = file_mode[7] == 1 ? 'w' : '-'
-  has_set_user_id = file_mode[11] == 1
-  x = if file_mode[6] == 1
-        has_set_user_id ? 's' : 'x'
+def parse_permission_triplets(permission_triplets, special_permission, special_permission_symbol)
+  r = permission_triplets[2] == 1 ? 'r' : '-'
+  w = permission_triplets[1] == 1 ? 'w' : '-'
+  has_special_permission = special_permission == 1
+  x = if permission_triplets[0] == 1
+        has_special_permission ? special_permission_symbol.downcase : 'x'
       else
-        has_set_user_id ? 'S' : '-'
-      end
-
-  r + w + x
-end
-
-def parse_group_permission(file_mode)
-  r = file_mode[5] == 1 ? 'r' : '-'
-  w = file_mode[4] == 1 ? 'w' : '-'
-  has_set_group_id = file_mode[10] == 1
-  x = if file_mode[3] == 1
-        has_set_group_id ? 's' : 'x'
-      else
-        has_set_group_id ? 'S' : '-'
-      end
-
-  r + w + x
-end
-
-def parse_other_permission(file_mode)
-  r = file_mode[2] == 1 ? 'r' : '-'
-  w = file_mode[1] == 1 ? 'w' : '-'
-  has_sticky_bit = file_mode[9] == 1
-  x = if file_mode[0] == 1
-        has_sticky_bit ? 't' : 'x'
-      else
-        has_sticky_bit ? 'T' : '-'
+        has_special_permission ? special_permission_symbol.upcase : '-'
       end
 
   r + w + x
