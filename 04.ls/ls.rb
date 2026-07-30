@@ -93,14 +93,14 @@ def parse_permission(file_mode)
   owner + group + other
 end
 
-def parse_permission_triplets(permission_triplets, special_permission, special_permission_symbol)
-  r = permission_triplets[2] == 1 ? 'r' : '-'
-  w = permission_triplets[1] == 1 ? 'w' : '-'
-  has_special_permission = special_permission == 1
-  x = if permission_triplets[0] == 1
-        has_special_permission ? special_permission_symbol.downcase : 'x'
+def parse_permission_triplets(triplets, special, special_symbol)
+  r = triplets[2] == 1 ? 'r' : '-'
+  w = triplets[1] == 1 ? 'w' : '-'
+  has_special = special == 1
+  x = if triplets[0] == 1
+        has_special ? special_symbol.downcase : 'x'
       else
-        has_special_permission ? special_permission_symbol.upcase : '-'
+        has_special ? special_symbol.upcase : '-'
       end
 
   r + w + x
