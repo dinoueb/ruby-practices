@@ -9,6 +9,7 @@ OPTIONS = {
   '-r' => :reverse,
   '-l' => :long_format
 }.freeze
+
 FILE_TYPES = {
   'file' => '-',
   'directory' => 'd',
@@ -19,6 +20,7 @@ FILE_TYPES = {
   'socket' => 's',
   'unknown' => 'w'
 }.freeze
+
 COLUMN_WIDTH_MULTIPLIER = 8
 MAX_COLUMN = 3
 
