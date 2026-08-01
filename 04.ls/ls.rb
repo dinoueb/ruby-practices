@@ -35,7 +35,7 @@ def main
       to_file_status(file_path)
     end
 
-    print_file_status(file_statuses)
+    print_file_statuses(file_statuses)
   else
     print_file_names(file_names)
   end
@@ -74,7 +74,7 @@ def to_file_status(file_path)
   }
 end
 
-def print_file_status(file_statuses)
+def print_file_statuses(file_statuses)
   column_widths = calc_column_widths(file_statuses)
 
   puts "total #{file_statuses.sum { |file_status| file_status[:block_count] }}"
