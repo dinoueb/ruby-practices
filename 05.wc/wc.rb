@@ -54,8 +54,7 @@ def print_text_status(text_status, options)
   print text_status[:line_count].to_s.rjust(COLUMN_WIDTH) if options.empty? || options[:lines]
   print text_status[:word_count].to_s.rjust(COLUMN_WIDTH) if options.empty? || options[:words]
   print text_status[:byte_count].to_s.rjust(COLUMN_WIDTH) if options.empty? || options[:bytes]
-  print ' '
-  print text_status[:label]
+  print " #{text_status[:label]}" unless text_status[:label].empty?
   puts
 end
 
