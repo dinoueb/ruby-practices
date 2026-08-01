@@ -20,10 +20,10 @@ def main
                   end
 
   print_text_statuses(text_statuses, options)
-  if text_statuses.length >= 2
-    total_text_status = total_text_status(text_statuses)
-    print_text_status(total_text_status, options)
-  end
+  return unless text_statuses.length >= 2
+
+  total_text_status = total_text_status(text_statuses)
+  print_text_status(total_text_status, options)
 end
 
 def parse_params
