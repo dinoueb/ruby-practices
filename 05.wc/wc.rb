@@ -8,11 +8,16 @@ COLUMN_WIDTH = 8
 
 def main
   options, file_paths = parse_params
-  file_statuses = file_paths.map { |file_path| to_file_status(file_path) }
-  print_file_statuses(file_statuses)
-  if file_statuses.length >= 2
-    total_counts = total_counts(file_statuses)
-    print_total_counts(total_counts)
+  text_statuses = if $stdin.tty?
+                    file_paths.map { |file_path| to_text_status(File.read(file_path), file_path) }
+                  else
+                    [to_text_status($stdin.read)]
+                  end
+
+  print_text_statuses(text_statuses)
+  if text_statuses.length >= 2
+    total_text_status = total_text_status(text_statuses)
+    print_text_status(total_text_status)
   end
 end
 
@@ -27,42 +32,35 @@ def parse_params
   [options, file_paths]
 end
 
-def to_file_status(file_path)
-  text = File.read(file_path)
-
+def to_text_status(text, label = '')
   {
-    path: file_path,
     line_count: text.lines.length,
     word_count: text.split.length,
-    byte_count: text.bytesize
+    byte_count: text.bytesize,
+    label: label
   }
 end
 
-def print_file_statuses(file_statuses)
-  file_statuses.each do |file_status|
-    print file_status[:line_count].to_s.rjust(COLUMN_WIDTH)
-    print file_status[:word_count].to_s.rjust(COLUMN_WIDTH)
-    print file_status[:byte_count].to_s.rjust(COLUMN_WIDTH)
-    print ' '
-    print file_status[:path]
-    puts
-  end
+def print_text_statuses(text_statuses)
+  text_statuses.each { |text_status| print_text_status(text_status) }
 end
 
-def total_counts(file_statuses)
-  {
-    lines: file_statuses.sum { |file_status| file_status[:line_count] },
-    words: file_statuses.sum { |file_status| file_status[:word_count] },
-    bytes: file_statuses.sum { |file_status| file_status[:byte_count] }
-  }
-end
-
-def print_total_counts(total_counts)
-  print total_counts[:lines].to_s.rjust(COLUMN_WIDTH)
-  print total_counts[:words].to_s.rjust(COLUMN_WIDTH)
-  print total_counts[:bytes].to_s.rjust(COLUMN_WIDTH)
-  print ' total'
+def print_text_status(text_status)
+  print text_status[:line_count].to_s.rjust(COLUMN_WIDTH)
+  print text_status[:word_count].to_s.rjust(COLUMN_WIDTH)
+  print text_status[:byte_count].to_s.rjust(COLUMN_WIDTH)
+  print ' '
+  print text_status[:label]
   puts
+end
+
+def total_text_status(text_statuses)
+  {
+    line_count: text_statuses.sum { |text_status| text_status[:line_count] },
+    word_count: text_statuses.sum { |text_status| text_status[:word_count] },
+    byte_count: text_statuses.sum { |text_status| text_status[:byte_count] },
+    label: 'total'
+  }
 end
 
 main
