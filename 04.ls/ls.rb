@@ -9,6 +9,7 @@ OPTIONS = {
   '-r' => :reverse,
   '-l' => :long_format
 }.freeze
+
 FILE_TYPES = {
   'file' => '-',
   'directory' => 'd',
@@ -19,6 +20,7 @@ FILE_TYPES = {
   'socket' => 's',
   'unknown' => 'w'
 }.freeze
+
 COLUMN_WIDTH_MULTIPLIER = 8
 MAX_COLUMN = 3
 
@@ -28,8 +30,12 @@ def main
   file_names = list_file_names(directory_path, options)
 
   if options[:long_format]
-    file_paths = file_names.map { |file_name| File.join(directory_path, file_name) }
-    print_file_status(file_paths)
+    file_statuses = file_names.map do |file_name|
+      file_path = File.join(directory_path, file_name)
+      to_file_status(file_path)
+    end
+
+    print_file_statuses(file_statuses)
   else
     print_file_names(file_names)
   end
@@ -52,36 +58,52 @@ def list_file_names(directory_path, options)
   options[:reverse] ? filtered_file_names.reverse : filtered_file_names
 end
 
-def print_file_status(file_paths)
-  file_statuses = file_paths.to_h { |file_path| [file_path, File.lstat(file_path)] }
-  column_widths = calc_column_widths(file_statuses.values)
+def to_file_status(file_path)
+  file_status = File.lstat(file_path)
 
-  puts "total #{file_statuses.values.sum(&:blocks)}"
-  file_statuses.each do |file_path, file_status|
-    print FILE_TYPES[file_status.ftype] + parse_permission(file_status.mode)
+  {
+    path: file_path,
+    block_count: file_status.blocks,
+    entry_type: FILE_TYPES[file_status.ftype],
+    permission: parse_permission(file_status.mode),
+    link_count: file_status.nlink,
+    owner_name: Etc.getpwuid(file_status.uid).name,
+    group_name: Etc.getgrgid(file_status.gid).name,
+    bytes: file_status.size,
+    modification_time: file_status.mtime
+  }
+end
+
+def print_file_statuses(file_statuses)
+  column_widths = calc_column_widths(file_statuses)
+
+  puts "total #{file_statuses.sum { |file_status| file_status[:block_count] }}"
+  file_statuses.each do |file_status|
+    print file_status[:entry_type]
+    print file_status[:permission]
     print ' '
-    print file_status.nlink.to_s.rjust(column_widths[:links])
+    print file_status[:link_count].to_s.rjust(column_widths[:link_count])
     print ' '
-    print Etc.getpwuid(file_status.uid).name.rjust(column_widths[:owner_name])
+    print file_status[:owner_name].rjust(column_widths[:owner_name])
     print '  '
-    print Etc.getgrgid(file_status.gid).name.rjust(column_widths[:group_name])
+    print file_status[:group_name].rjust(column_widths[:group_name])
     print '  '
-    print file_status.size.to_s.rjust(column_widths[:bytes])
+    print file_status[:bytes].to_s.rjust(column_widths[:bytes])
     print ' '
-    print file_status.mtime.strftime('%_m %e %R')
+    print file_status[:modification_time].strftime('%_m %e %R')
     print ' '
-    print File.basename(file_path)
-    print " -> #{File.readlink(file_path)}" if file_status.symlink?
+    print File.basename(file_status[:path])
+    print " -> #{File.readlink(file_status[:path])}" if File.symlink?(file_status[:path])
     puts
   end
 end
 
 def calc_column_widths(file_statuses)
   {
-    links: file_statuses.map { |file_status| file_status.nlink.to_s.length }.max,
-    owner_name: file_statuses.map { |file_status| Etc.getpwuid(file_status.uid).name.length }.max,
-    group_name: file_statuses.map { |file_status| Etc.getgrgid(file_status.gid).name.length }.max,
-    bytes: file_statuses.map { |file_status| file_status.size.to_s.length }.max
+    link_count: file_statuses.map { |file_status| file_status[:link_count].to_s.length }.max,
+    owner_name: file_statuses.map { |file_status| file_status[:owner_name].length }.max,
+    group_name: file_statuses.map { |file_status| file_status[:group_name].length }.max,
+    bytes: file_statuses.map { |file_status| file_status[:bytes].to_s.length }.max
   }
 end
 
