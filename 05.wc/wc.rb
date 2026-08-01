@@ -3,7 +3,12 @@
 
 require 'optparse'
 
-OPTIONS = {}.freeze
+OPTIONS = {
+  '-l' => :lines,
+  '-w' => :words,
+  '-c' => :bytes
+}.freeze
+
 COLUMN_WIDTH = 8
 
 def main
@@ -14,10 +19,10 @@ def main
                     [to_text_status($stdin.read)]
                   end
 
-  print_text_statuses(text_statuses)
+  print_text_statuses(text_statuses, options)
   if text_statuses.length >= 2
     total_text_status = total_text_status(text_statuses)
-    print_text_status(total_text_status)
+    print_text_status(total_text_status, options)
   end
 end
 
@@ -41,14 +46,14 @@ def to_text_status(text, label = '')
   }
 end
 
-def print_text_statuses(text_statuses)
-  text_statuses.each { |text_status| print_text_status(text_status) }
+def print_text_statuses(text_statuses, options)
+  text_statuses.each { |text_status| print_text_status(text_status, options) }
 end
 
-def print_text_status(text_status)
-  print text_status[:line_count].to_s.rjust(COLUMN_WIDTH)
-  print text_status[:word_count].to_s.rjust(COLUMN_WIDTH)
-  print text_status[:byte_count].to_s.rjust(COLUMN_WIDTH)
+def print_text_status(text_status, options)
+  print text_status[:line_count].to_s.rjust(COLUMN_WIDTH) if options.empty? || options[:lines]
+  print text_status[:word_count].to_s.rjust(COLUMN_WIDTH) if options.empty? || options[:words]
+  print text_status[:byte_count].to_s.rjust(COLUMN_WIDTH) if options.empty? || options[:bytes]
   print ' '
   print text_status[:label]
   puts
