@@ -39,7 +39,7 @@ end
 
 def to_text_status(text, label = '')
   {
-    line_count: text.lines.length,
+    line_count: text.count("\n"),
     word_count: text.split.length,
     byte_count: text.bytesize,
     label: label
