@@ -13,10 +13,10 @@ COLUMN_WIDTH = 8
 
 def main
   options, file_paths = parse_params
-  text_statuses = if $stdin.tty?
-                    file_paths.map { |file_path| to_text_status(File.read(file_path), file_path) }
-                  else
+  text_statuses = if file_paths.empty?
                     [to_text_status($stdin.read)]
+                  else
+                    file_paths.map { |file_path| to_text_status(File.read(file_path), file_path) }
                   end
 
   print_text_statuses(text_statuses, options)
